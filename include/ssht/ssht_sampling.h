@@ -15,7 +15,10 @@
 extern "C"{
 #endif
 
+#ifdef __cplusplus
 ssht_complex_double ssht_sampling_weight_mw(int p);
+#endef
+void ssht_sampling_weight_2_mw(ssht_complex_double *weight, int p);
 double ssht_sampling_weight_dh(double theta_t, int L);
 void ssht_sampling_gl_thetas_weights(double *thetas, double *weights, int L);
 
@@ -97,5 +100,28 @@ static inline void ssht_sampling_ind2elm(int *el, int *m, int ind) {
 #ifdef __cplusplus
 }
 #endif
+
+
+#ifdef __cplusplus
+// C and C++ use different types for complex numbers. While these
+// types have the same layout in memory, they might be handled
+// differently when being returned from a function. This is a problem
+// e.g. on 32-bit Intel architectures.
+//
+// To avoid this problem, we define the function
+// `ssht_sampling_weight_2_mw` which returns the complex weight via a
+// pointer. This works in both C and C++. In C, we use the original
+// implementation of `ssht_sampling_weight_mw` (see above). In C++, we
+// define a new function here that calls `ssht_sampling_weight_2_mw`.
+//
+// Since this new function is defined outside any `extern "C"`, the
+// two definitions do not clash.
+inline ssht_complex_double ssht_sampling_weight_mw(int p) {
+  ssht_complex_double weight;
+  ssht_sampling_weight_2_mw(&weight, p);
+  return weight;
+}
+#endif
+
 
 #endif

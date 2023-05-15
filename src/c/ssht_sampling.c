@@ -48,7 +48,11 @@ ssht_complex_double ssht_sampling_weight_mw(int p) {
   }
   
 }
-  
+
+void ssht_sampling_weight_2_mw(ssht_complex_double *weight, int p) {
+  *weight = ssht_sampling_weight_1_ mw(p);
+}
+
 
 /*!
  * Compute Driscoll and Healy weights.
